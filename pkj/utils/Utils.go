@@ -5,10 +5,26 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/crypto/bcrypt"
 )
 
+func HashPassword(password string) ([]byte, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return nil, err
+	}
+	return hash, nil
+}
+
+func UnHashPassword(hashedPassword string, password string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func LoadEnv() error {
-	err := godotenv.Load("F:/sigmaa/Real-time Notification and Task Management System/.env")
+	err := godotenv.Load("F:/sigmaa/Real-time-Notification-and-Task-Management-System/.env")
 	if err != nil {
 		log.Fatal("failed to load env file ")
 		return err

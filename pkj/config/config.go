@@ -20,7 +20,7 @@ func Connect() {
 	if err != nil {
 		panic(err)
 	}
-	db.Ping()
+
 	db = database
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
