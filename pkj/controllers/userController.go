@@ -80,6 +80,7 @@ func LogIn(c *gin.Context) {
 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
 	if err != nil {
 		utils.HandleError(c, err, "failed to create token ", http.StatusInternalServerError)
+
 	}
 
 	c.SetSameSite(http.SameSiteLaxMode)

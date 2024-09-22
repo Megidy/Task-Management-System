@@ -20,6 +20,18 @@ func init() {
 	config.Connect()
 	db = config.GetDb()
 }
+func FindUserById(id int) (*User, error) {
+	var user User
+	row := db.QueryRow("select * from users where id =?")
+	err := row.Scan(&user.Id, &user.Username, &user.Password, &user.Role)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
+}
 
 func GetUser(username string) (*User, error) {
 	var user User
