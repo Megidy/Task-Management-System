@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	// utils.LoadEnv()
 	router := gin.Default()
 	routes.InitRoutes(router)
 	router.Run(":8080")
