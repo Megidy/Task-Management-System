@@ -57,3 +57,28 @@ func GetAllTasks(userId int) ([]Response, error) {
 	return response, nil
 
 }
+func GetSingleTask(userId, taskId int) (Response, error) {
+	var response Response
+	row := db.QueryRow("select title,description,priority,status,created,to_done from tasks where user_id=? and id=?", userId, taskId)
+
+	err := row.Scan(&response.Title, &response.Description, &response.Priority, &response.Status, &response.Created, &response.ToDone)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return Response{}, nil
+		} else {
+			return Response{}, err
+		}
+	}
+	return response, nil
+}
+
+func DeleteTask(userId, taskId int) error {
+	_, err := db.Exec("delete from tasks where user_id =? and id=?", userId, taskId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
+	}
+	return nil
+}

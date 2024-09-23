@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/Megidy/TaskManagmentSystem/pkj/models"
@@ -47,7 +48,26 @@ func CreateTask(c *gin.Context) {
 	})
 }
 
-func GetTask(c *gin.Context) {
+func GetSingleTask(c *gin.Context) {
+	user, ok := c.Get("user")
+	if !ok {
+		utils.HandleError(c, nil, "failed to retrieve data about user", http.StatusUnauthorized)
+		return
+	}
+	id := c.Param("taskId")
+	taskId, err := strconv.Atoi(id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get param", http.StatusNotFound)
+		return
+	}
+	response, err := models.GetSingleTask(user.(*models.User).Id, taskId)
+	if err != nil {
+		utils.HandleError(c, err, "failed to retrieve data from db ", http.StatusInternalServerError)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"task : ": response,
+	})
 
 }
 
@@ -73,5 +93,24 @@ func UpdateTask(c *gin.Context) {
 }
 
 func DeleteTask(c *gin.Context) {
+	user, ok := c.Get("user")
+	if !ok {
+		utils.HandleError(c, nil, "failed to retrieve user data ", http.StatusUnauthorized)
+		return
+	}
+	id := c.Param("taskId")
+	taskId, err := strconv.Atoi(id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get taskid", http.StatusNotFound)
+		return
+	}
+	err = models.DeleteTask(user.(*models.User).Id, taskId)
+	if err != nil {
+		utils.HandleError(c, err, "faield to delete task from db", http.StatusInternalServerError)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"success": "deleted task",
+	})
 
 }
