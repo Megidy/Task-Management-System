@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users(
 
 
 CREATE TABLE IF NOT EXISTS tasks (
+    user_id INT ,
     id INT AUTO_INCREMENT PRIMARY KEY,             
     title VARCHAR(255) NOT NULL,                   
     description VARCHAR(255),                             
@@ -21,6 +22,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 
 
 CREATE TABLE IF NOT EXISTS task_dependencies (
+    user_id INT,
     task_id INT,                                   
     dependent_task_id INT                       
 );

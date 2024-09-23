@@ -19,27 +19,34 @@ func SignUp(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&UserSignUpRequest)
 	if err != nil {
 		utils.HandleError(c, err, "failed to read body ", http.StatusBadRequest)
+		return
 	}
 
 	hashedPassword, err := utils.HashPassword(UserSignUpRequest.Password)
 	if err != nil {
 		utils.HandleError(c, err, "failed to hash password ", http.StatusBadRequest)
+		return
 	}
 
 	ok, err := models.IsSignedUp(UserSignUpRequest.Username)
 	if err != nil {
 		utils.HandleError(c, err, "user is already signed up", http.StatusBadRequest)
+		return
 	}
 
 	if ok {
 		c.AbortWithStatusJSON(http.StatusBadRequest, "user is already signed up")
+		return
 	}
 
 	err = models.CreateUser(UserSignUpRequest.Username, string(hashedPassword))
 	if err != nil {
 		utils.HandleError(c, err, "failed to create new user", http.StatusInternalServerError)
+		return
 	}
-
+	c.JSON(http.StatusOK, gin.H{
+		"success": "you signed up ",
+	})
 }
 func LogIn(c *gin.Context) {
 	utils.LoadEnv()

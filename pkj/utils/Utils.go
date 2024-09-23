@@ -36,9 +36,9 @@ func CreateDSN() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	username := os.Getenv("USER")
-	password := os.Getenv("PASSWORD")
-	dbname := os.Getenv("DBNAME")
+	username := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
 	dsn := username + ":" + password + "@/" + dbname
 	return dsn, nil
 }

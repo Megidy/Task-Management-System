@@ -20,9 +20,9 @@ func init() {
 	config.Connect()
 	db = config.GetDb()
 }
-func FindUserById(id int) (*User, error) {
+func FindUserById(id float64) (*User, error) {
 	var user User
-	row := db.QueryRow("select * from users where id =?")
+	row := db.QueryRow("select * from users where id =?", id)
 	err := row.Scan(&user.Id, &user.Username, &user.Password, &user.Role)
 	if err != nil {
 		if err == sql.ErrNoRows {

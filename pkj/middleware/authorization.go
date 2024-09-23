@@ -31,7 +31,7 @@ func RequireAuth(c *gin.Context) {
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
 			utils.HandleError(c, err, "your token expired", http.StatusUnauthorized)
 		}
-		user, err := models.FindUserById(claims["sub"].(int))
+		user, err := models.FindUserById(claims["sub"].(float64))
 		if err != nil {
 			utils.HandleError(c, err, "failed to retrive user from db", http.StatusInternalServerError)
 
