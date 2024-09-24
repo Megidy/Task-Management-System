@@ -15,5 +15,6 @@ var InitRoutes = func(router gin.IRouter) {
 	router.DELETE("/task/:taskId", middleware.RequireAuth, controllers.DeleteTask)
 	// router.PUT("/task/", middleware.RequireAuth, controllers.UpdateTask)
 	router.PUT("/task/:taskId", middleware.RequireAuth, controllers.UpdateTask)
+	router.GET("/dependencies", middleware.RequireAuth, controllers.GetAllDependencies)
 
 }

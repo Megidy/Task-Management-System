@@ -20,13 +20,36 @@ type Task struct {
 	UserId      int       `json:"user_id"`     //id of the user that created that task
 }
 
-func CreateTask(task *Task) error {
+func CreateTask(task Task) error {
+	log.Println(task.Id)
 	_, err := db.Exec("insert into tasks(title,description,priority,to_done,user_id) values(?,?,?,?,?)",
 		task.Title, task.Description, task.Priority, task.ToDone.Format("2006-01-02 15:04:05"), task.UserId)
 	if err != nil {
 		return err
 	}
+	var dependency Dependency
+	row := db.QueryRow("select id from tasks where user_id=? order by id desc limit 1 ", task.UserId)
+	err = row.Scan(&dependency.TaskId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
+	}
+	log.Println(task.Id)
+	dependency.UserId = task.UserId
+
+	dependency.DependentTaskId = task.Dependency
+	log.Println(dependency)
+	if task.Dependency != 0 {
+		err := AddDependency(dependency)
+		if err != nil {
+			return err
+
+		}
+	}
 	return nil
+
 }
 
 func GetAllTasks(userId int) ([]types.Response, error) {

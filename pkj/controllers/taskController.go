@@ -33,7 +33,7 @@ func CreateTask(c *gin.Context) {
 		ToDone:      NewUsersTaskRequest.ToDone,
 		UserId:      user.(*models.User).Id,
 	}
-	err = models.CreateTask(&task)
+	err = models.CreateTask(task)
 	if err != nil {
 		utils.HandleError(c, err, "failed to create new task", http.StatusInternalServerError)
 		return
