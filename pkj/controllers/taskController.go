@@ -1,11 +1,12 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/Megidy/TaskManagmentSystem/pkj/models"
+	"github.com/Megidy/TaskManagmentSystem/pkj/types"
 	"github.com/Megidy/TaskManagmentSystem/pkj/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -17,13 +18,7 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
-	var NewUsersTaskRequest struct {
-		Title       string
-		Description string
-		Priority    string
-		Dependency  int
-		ToDone      time.Time //for example "to_done": "2024-09-30 15:00:00"
-	}
+	var NewUsersTaskRequest types.TaskRequest
 	err := c.ShouldBindBodyWithJSON(&NewUsersTaskRequest)
 	if err != nil {
 		utils.HandleError(c, err, "failed to read body", http.StatusBadRequest)
@@ -89,7 +84,29 @@ func GetAllTasks(c *gin.Context) {
 }
 
 func UpdateTask(c *gin.Context) {
+	var UpdatedTask types.TaskUpdateRequest
 
+	err := c.ShouldBindJSON(&UpdatedTask)
+	log.Println("task in function :", UpdatedTask)
+	if err != nil {
+		utils.HandleError(c, err, "failed to read body ", http.StatusBadRequest)
+		return
+	}
+	user, ok := c.Get("user")
+	if !ok {
+		utils.HandleError(c, nil, "failed to retrieve data about user", http.StatusUnauthorized)
+		return
+	}
+	id := c.Param("taskId")
+	taskId, err := strconv.Atoi(id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get param", http.StatusNotFound)
+		return
+	}
+	err = models.UpdateTask(UpdatedTask, user.(*models.User).Id, taskId)
+	if err != nil {
+		utils.HandleError(c, err, "failed to update task", http.StatusInternalServerError)
+	}
 }
 
 func DeleteTask(c *gin.Context) {
