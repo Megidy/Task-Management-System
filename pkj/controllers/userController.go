@@ -6,16 +6,14 @@ import (
 	"time"
 
 	"github.com/Megidy/TaskManagmentSystem/pkj/models"
+	"github.com/Megidy/TaskManagmentSystem/pkj/types"
 	"github.com/Megidy/TaskManagmentSystem/pkj/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func SignUp(c *gin.Context) {
-	var UserSignUpRequest struct {
-		Username string
-		Password string
-	}
+	var UserSignUpRequest types.UserAuth
 	err := c.ShouldBindBodyWithJSON(&UserSignUpRequest)
 	if err != nil {
 		utils.HandleError(c, err, "failed to read body ", http.StatusBadRequest)
@@ -50,10 +48,7 @@ func SignUp(c *gin.Context) {
 }
 func LogIn(c *gin.Context) {
 	utils.LoadEnv()
-	var UserLogInRequest struct {
-		Username string
-		Password string
-	}
+	var UserLogInRequest types.UserAuth
 
 	err := c.ShouldBindBodyWithJSON(&UserLogInRequest)
 	if err != nil {

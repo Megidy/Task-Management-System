@@ -5,14 +5,8 @@ import (
 	"log"
 
 	"github.com/Megidy/TaskManagmentSystem/pkj/config"
+	"github.com/Megidy/TaskManagmentSystem/pkj/types"
 )
-
-type User struct {
-	Id       int    `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Role     string `json:"role"`
-}
 
 var db *sql.DB
 
@@ -20,8 +14,8 @@ func init() {
 	config.Connect()
 	db = config.GetDb()
 }
-func FindUserById(id float64) (*User, error) {
-	var user User
+func FindUserById(id float64) (*types.User, error) {
+	var user types.User
 	row := db.QueryRow("select * from users where id =?", id)
 	err := row.Scan(&user.Id, &user.Username, &user.Password, &user.Role)
 	if err != nil {
@@ -33,8 +27,8 @@ func FindUserById(id float64) (*User, error) {
 	return &user, nil
 }
 
-func GetUser(username string) (*User, error) {
-	var user User
+func GetUser(username string) (*types.User, error) {
+	var user types.User
 	//probably will need to rework , reduce amount of data that will return to user
 	row := db.QueryRow("select * from users where username =?", username)
 	err := row.Scan(&user.Id, &user.Username, &user.Password, &user.Role)
@@ -47,7 +41,7 @@ func GetUser(username string) (*User, error) {
 	return &user, nil
 }
 func IsSignedUp(username string) (bool, error) {
-	var user User
+	var user types.User
 	row := db.QueryRow("select username from users where username = ? ", username)
 	log.Println("queried")
 	err := row.Scan(&user.Username)

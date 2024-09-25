@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Megidy/TaskManagmentSystem/pkj/models"
+	"github.com/Megidy/TaskManagmentSystem/pkj/types"
 	"github.com/Megidy/TaskManagmentSystem/pkj/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +15,7 @@ func GetAllDependencies(c *gin.Context) {
 		utils.HandleError(c, nil, "failed to get user data", http.StatusUnauthorized)
 		return
 	}
-	deps, err := models.GetAllDependencies(user.(*models.User).Id)
+	deps, err := models.GetAllDependencies(user.(*types.User).Id)
 	if err != nil {
 		utils.HandleError(c, err, "failed to get data from db ", http.StatusInternalServerError)
 		return

@@ -25,13 +25,13 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
-	var task = models.Task{
+	var task = types.Task{
 		Title:       NewUsersTaskRequest.Title,
 		Description: NewUsersTaskRequest.Description,
 		Priority:    NewUsersTaskRequest.Priority,
 		Dependency:  NewUsersTaskRequest.Dependency,
 		ToDone:      NewUsersTaskRequest.ToDone,
-		UserId:      user.(*models.User).Id,
+		UserId:      user.(*types.User).Id,
 	}
 	err = models.CreateTask(task)
 	if err != nil {
@@ -55,7 +55,7 @@ func GetSingleTask(c *gin.Context) {
 		utils.HandleError(c, err, "failed to get param", http.StatusNotFound)
 		return
 	}
-	response, err := models.GetSingleTask(user.(*models.User).Id, taskId)
+	response, err := models.GetSingleTask(user.(*types.User).Id, taskId)
 	if err != nil {
 		utils.HandleError(c, err, "failed to retrieve data from db ", http.StatusInternalServerError)
 		return
@@ -72,7 +72,7 @@ func GetAllTasks(c *gin.Context) {
 		utils.HandleError(c, nil, "failed to retrieve data about user", http.StatusUnauthorized)
 		return
 	}
-	response, err := models.GetAllTasks(user.(*models.User).Id)
+	response, err := models.GetAllTasks(user.(*types.User).Id)
 	if err != nil {
 		utils.HandleError(c, err, "failed to get tasks", http.StatusInternalServerError)
 		return
@@ -103,7 +103,7 @@ func UpdateTask(c *gin.Context) {
 		utils.HandleError(c, err, "failed to get param", http.StatusNotFound)
 		return
 	}
-	err = models.UpdateTask(UpdatedTask, user.(*models.User).Id, taskId)
+	err = models.UpdateTask(UpdatedTask, user.(*types.User).Id, taskId)
 	if err != nil {
 		utils.HandleError(c, err, "failed to update task", http.StatusInternalServerError)
 	}
@@ -121,7 +121,7 @@ func DeleteTask(c *gin.Context) {
 		utils.HandleError(c, err, "failed to get taskid", http.StatusNotFound)
 		return
 	}
-	err = models.DeleteTask(user.(*models.User).Id, taskId)
+	err = models.DeleteTask(user.(*types.User).Id, taskId)
 	if err != nil {
 		utils.HandleError(c, err, "faield to delete task from db", http.StatusInternalServerError)
 		return
