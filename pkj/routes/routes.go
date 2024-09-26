@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/Megidy/TaskManagmentSystem/pkj/controllers"
 	"github.com/Megidy/TaskManagmentSystem/pkj/middleware"
+	"github.com/Megidy/TaskManagmentSystem/pkj/producer"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,5 +17,5 @@ var InitRoutes = func(router gin.IRouter) {
 	// router.PUT("/task/", middleware.RequireAuth, controllers.UpdateTask)
 	router.PUT("/task/:taskId", middleware.RequireAuth, controllers.UpdateTask)
 	router.GET("/dependencies", middleware.RequireAuth, controllers.GetAllDependencies)
-
+	router.POST("/status/:taskId", middleware.RequireAuth, producer.ChangeStatus)
 }

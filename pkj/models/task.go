@@ -7,6 +7,14 @@ import (
 	"github.com/Megidy/TaskManagmentSystem/pkj/types"
 )
 
+func ChangeStatus(changeStatus types.ChangeStatus) error {
+	_, err := db.Exec("update tasks set status=? where id=? and user_id=?", changeStatus.Status, changeStatus.TaskId, changeStatus.UserId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func CreateTask(task types.Task) error {
 	log.Println(task.Id)
 	_, err := db.Exec("insert into tasks(title,description,priority,to_done,user_id) values(?,?,?,?,?)",

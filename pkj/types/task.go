@@ -38,3 +38,9 @@ type TaskRequest struct {
 	Dependency  int       `json:"dependency"`
 	ToDone      time.Time `json:"to_done"` //"2024-09-22T15:00:00Z"
 }
+
+type ChangeStatus struct {
+	TaskId int    `json:"task_id"`
+	Status string `json:"status"`
+	UserId int    `json:"userId"`
+}
