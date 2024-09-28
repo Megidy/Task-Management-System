@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/Megidy/TaskManagmentSystem/pkj/models"
@@ -89,6 +90,25 @@ func LogIn(c *gin.Context) {
 	c.SetCookie("Authorization", tokenString, 3600*24*10, "", "", false, true)
 	c.JSON(http.StatusOK, gin.H{
 		"succesfull": "you succesfully logged in ",
+	})
+
+}
+
+func DeleteUser(c *gin.Context) {
+	id := c.Param("userId")
+	userId, err := strconv.Atoi(id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to converte to int ", http.StatusBadRequest)
+		return
+	}
+
+	err = models.DeleteUser(userId)
+	if err != nil {
+		utils.HandleError(c, err, "failed to delete user from db ", http.StatusInternalServerError)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"success": "deleted user ",
 	})
 
 }

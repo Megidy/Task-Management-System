@@ -73,3 +73,11 @@ func CreateUser(username string, password string) error {
 	}
 	return nil
 }
+
+func DeleteUser(userId int) error {
+	_, err := db.Exec("delete from users where id=?", userId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
