@@ -131,3 +131,34 @@ func DeleteTask(c *gin.Context) {
 	})
 
 }
+
+func SortTasks(c *gin.Context) {
+	user, ok := c.Get("user")
+	if !ok {
+		utils.HandleError(c, nil, "failed to retrieve data about user", http.StatusUnauthorized)
+		return
+	}
+
+	sortTitle, err := models.GetTasksByTitle(user.(*types.User).Id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get tasks by title", http.StatusInternalServerError)
+		return
+	}
+	sortCreatedAt, err := models.GetTasksByCreatedAt(user.(*types.User).Id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get tasks by CreatedAt", http.StatusInternalServerError)
+		return
+	}
+	sortToDone, err := models.GetTasksByToDone(user.(*types.User).Id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get tasks by CreatedAt", http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"sorted by title (a-z)": sortTitle,
+		"sorted by created at ": sortCreatedAt,
+		"sorted by to done ":    sortToDone,
+	})
+
+}

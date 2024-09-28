@@ -109,3 +109,63 @@ func UpdateTask(task types.TaskUpdateRequest, userId, taskId int) error {
 	log.Println("updated ")
 	return nil
 }
+
+func GetTasksByTitle(userId int) ([]types.Response, error) {
+	var response []types.Response
+	query, err := db.Query("select title,description,priority,status,created,to_done from tasks where user_id=? order by title ASC", userId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	for query.Next() {
+		var res types.Response
+		err := query.Scan(&res.Title, &res.Description, &res.Priority, &res.Status, &res.Created, &res.ToDone)
+		if err != nil {
+			return nil, err
+		}
+		response = append(response, res)
+	}
+	return response, nil
+}
+
+func GetTasksByCreatedAt(userId int) ([]types.Response, error) {
+	var response []types.Response
+	query, err := db.Query("select title,description,priority,status,created,to_done from tasks where user_id=? order by created desc", userId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	for query.Next() {
+		var res types.Response
+		err := query.Scan(&res.Title, &res.Description, &res.Priority, &res.Status, &res.Created, &res.ToDone)
+		if err != nil {
+			return nil, err
+		}
+		response = append(response, res)
+	}
+	return response, nil
+}
+
+func GetTasksByToDone(userId int) ([]types.Response, error) {
+	var response []types.Response
+	query, err := db.Query("select title,description,priority,status,created,to_done from tasks where user_id=? order by to_done asc", userId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	for query.Next() {
+		var res types.Response
+		err := query.Scan(&res.Title, &res.Description, &res.Priority, &res.Status, &res.Created, &res.ToDone)
+		if err != nil {
+			return nil, err
+		}
+		response = append(response, res)
+	}
+	return response, nil
+}

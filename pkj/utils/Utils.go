@@ -24,7 +24,7 @@ func UnHashPassword(hashedPassword string, password string) error {
 	return nil
 }
 func LoadEnv() error {
-	err := godotenv.Load("F:/sigmaa/Real-time-Notification-and-Task-Management-System/.env")
+	err := godotenv.Load("F:/sigmaa/TaskManagerAPI/.env")
 	if err != nil {
 		log.Fatal("failed to load env file ")
 		return err

@@ -6,6 +6,7 @@ import (
 
 	"github.com/Megidy/TaskManagmentSystem/pkj/config"
 	"github.com/Megidy/TaskManagmentSystem/pkj/types"
+	"github.com/Megidy/TaskManagmentSystem/pkj/utils"
 )
 
 var db *sql.DB
@@ -13,6 +14,10 @@ var db *sql.DB
 func init() {
 	config.Connect()
 	db = config.GetDb()
+	err := utils.LoadEnv()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 func FindUserById(id float64) (*types.User, error) {
 	var user types.User
