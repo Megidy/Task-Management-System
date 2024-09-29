@@ -49,6 +49,19 @@ func ChangeStatus(c *gin.Context) {
 		utils.HandleError(c, err, "failed to read body", http.StatusBadRequest)
 		return
 	}
+	if ChangeStatus.Status == "done" {
+		ok, err := models.HaveDependencies(user.(*types.User).Id, taskId)
+		if err != nil {
+			utils.HandleError(c, err, "failed to get dependencies from db", http.StatusInternalServerError)
+			return
+		}
+		if ok {
+			c.JSON(http.StatusConflict, gin.H{
+				"error": "you cant complete task when you didnt complete other dependent tasks",
+			})
+			return
+		}
+	}
 
 	statusInBytes, err := json.Marshal(ChangeStatus)
 	if err != nil {

@@ -33,3 +33,15 @@ func GetAllDependencies(userId int) ([]types.Dependency, error) {
 	}
 	return deps, nil
 }
+
+func HaveDependencies(userId, taskId int) (bool, error) {
+	_, err := db.Query("select * from task_dependencies where user_id=? and task_id =?", userId, taskId)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
