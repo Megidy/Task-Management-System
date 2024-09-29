@@ -45,13 +45,32 @@ func GetUser(username string) (*types.User, error) {
 	}
 	return &user, nil
 }
+
+func IsSignedUpById(userId int) (bool, error) {
+	var user types.User
+	row := db.QueryRow("select id from users where id = ? ", userId)
+
+	err := row.Scan(&user.Id)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		} else {
+			return true, err
+		}
+	}
+	if userId == user.Id {
+		return true, err
+	}
+	return false, nil
+}
+
 func IsSignedUp(username string) (bool, error) {
 	var user types.User
 	row := db.QueryRow("select username from users where username = ? ", username)
-	log.Println("queried")
+
 	err := row.Scan(&user.Username)
-	log.Println("scanned")
-	//rework
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil
@@ -60,7 +79,6 @@ func IsSignedUp(username string) (bool, error) {
 		}
 	}
 	if username == user.Username {
-		log.Println("compared")
 		return true, err
 	}
 	return false, nil

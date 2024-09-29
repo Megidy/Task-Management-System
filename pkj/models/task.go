@@ -7,6 +7,19 @@ import (
 	"github.com/Megidy/TaskManagmentSystem/pkj/types"
 )
 
+func IsCreated(taskId, userID int) (bool, error) {
+	var id int
+	row := db.QueryRow("select id from tasks where id=? and user_id=?", taskId, userID)
+	err := row.Scan(&id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
+
 func ChangeStatus(changeStatus types.ChangeStatus) error {
 	_, err := db.Exec("update tasks set status=? where id=? and user_id=?", changeStatus.Status, changeStatus.TaskId, changeStatus.UserId)
 	if err != nil {
@@ -100,8 +113,8 @@ func DeleteTask(userId, taskId int) error {
 func UpdateTask(task types.TaskUpdateRequest, userId, taskId int) error {
 	log.Println("about to update ")
 	log.Println("task in function :", task)
-	_, err := db.Exec("update tasks set title=?,description=?,priority=?,status=?,to_done=? where id=? and user_id=?",
-		task.Title, task.Description, task.Priority, task.Status, task.ToDone.Format("2006-01-02 15:04:05"), taskId, userId)
+	_, err := db.Exec("update tasks set title=?,description=?,priority=?,to_done=? where id=? and user_id=?",
+		task.Title, task.Description, task.Priority, task.ToDone.Format("2006-01-02 15:04:05"), taskId, userId)
 
 	if err != nil {
 		return err
