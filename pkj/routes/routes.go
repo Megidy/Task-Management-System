@@ -19,5 +19,7 @@ var InitRoutes = func(router gin.IRouter) {
 	router.GET("/dependencies", middleware.RequireAuth, controllers.GetAllDependencies)
 	router.POST("/status/:taskId", middleware.RequireAuth, producer.ChangeStatus)
 	router.DELETE("/admin/user/:userId", middleware.RequireAuth, middleware.RequireAdmin, controllers.DeleteUser)
+	router.GET("/admin/logs", middleware.RequireAuth, middleware.RequireAdmin, controllers.GetAllLogs)
+	router.GET("/admin/logs/:userId", middleware.RequireAuth, middleware.RequireAdmin, controllers.GetUserLogs)
 
 }

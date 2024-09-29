@@ -37,13 +37,26 @@ func CreateTask(c *gin.Context) {
 	if err != nil {
 		utils.HandleError(c, err, "failed to create new task", http.StatusInternalServerError)
 		return
+
 	}
+	var NewLog = types.Log{
+		UserId: user.(*types.User).Id,
+		TaskId: task.Id,
+		Action: "Created new task ",
+	}
+	err = models.CreateLog(NewLog)
+	if err != nil {
+		utils.HandleError(c, err, "failed to Create log ", http.StatusInternalServerError)
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": "created new task ",
 	})
 }
 
 func GetSingleTask(c *gin.Context) {
+
 	user, ok := c.Get("user")
 	if !ok {
 		utils.HandleError(c, nil, "failed to retrieve data about user", http.StatusUnauthorized)
@@ -53,6 +66,15 @@ func GetSingleTask(c *gin.Context) {
 	taskId, err := strconv.Atoi(id)
 	if err != nil {
 		utils.HandleError(c, err, "failed to get param", http.StatusNotFound)
+		return
+	}
+	ok, err = models.IsCreated(taskId, user.(*types.User).Id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get data from db", http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		utils.HandleError(c, nil, "no task found", http.StatusBadRequest)
 		return
 	}
 	response, err := models.GetSingleTask(user.(*types.User).Id, taskId)
@@ -103,10 +125,33 @@ func UpdateTask(c *gin.Context) {
 		utils.HandleError(c, err, "failed to get param", http.StatusNotFound)
 		return
 	}
+	ok, err = models.IsCreated(taskId, user.(*types.User).Id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get data from db", http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		utils.HandleError(c, nil, "no task found", http.StatusBadRequest)
+		return
+	}
 	err = models.UpdateTask(UpdatedTask, user.(*types.User).Id, taskId)
 	if err != nil {
 		utils.HandleError(c, err, "failed to update task", http.StatusInternalServerError)
 	}
+	var NewLog = types.Log{
+		UserId: user.(*types.User).Id,
+		TaskId: taskId,
+		Action: "Updated task ",
+	}
+	err = models.CreateLog(NewLog)
+	if err != nil {
+		utils.HandleError(c, err, "failed to Create log ", http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": "you updated task",
+	})
 }
 
 func DeleteTask(c *gin.Context) {
@@ -121,9 +166,28 @@ func DeleteTask(c *gin.Context) {
 		utils.HandleError(c, err, "failed to get taskid", http.StatusNotFound)
 		return
 	}
+	ok, err = models.IsCreated(taskId, user.(*types.User).Id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get data from db", http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		utils.HandleError(c, nil, "no task found", http.StatusBadRequest)
+		return
+	}
 	err = models.DeleteTask(user.(*types.User).Id, taskId)
 	if err != nil {
 		utils.HandleError(c, err, "faield to delete task from db", http.StatusInternalServerError)
+		return
+	}
+	var NewLog = types.Log{
+		UserId: user.(*types.User).Id,
+		TaskId: taskId,
+		Action: "Deleted task ",
+	}
+	err = models.CreateLog(NewLog)
+	if err != nil {
+		utils.HandleError(c, err, "failed to Create log ", http.StatusInternalServerError)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
