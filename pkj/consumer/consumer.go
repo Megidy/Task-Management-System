@@ -51,6 +51,17 @@ func main() {
 				if err != nil {
 					log.Println(err, "failed to change status in db")
 				}
+				var NewLog = types.Log{
+					UserId: user.(*types.User).Id,
+					TaskId: task.Id,
+					Action: "Created new task ",
+				}
+				err = models.CreateLog(NewLog)
+				if err != nil {
+					log.Println()
+					return
+				}
+
 				log.Printf("StatusChanged %s\n", Status)
 			case <-sigchan:
 				log.Println("interrups detected")

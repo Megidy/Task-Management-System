@@ -8,6 +8,7 @@ import (
 
 	"github.com/IBM/sarama"
 
+	"github.com/Megidy/TaskManagmentSystem/pkj/models"
 	"github.com/Megidy/TaskManagmentSystem/pkj/types"
 	"github.com/Megidy/TaskManagmentSystem/pkj/utils"
 	"github.com/gin-gonic/gin"
@@ -29,6 +30,15 @@ func ChangeStatus(c *gin.Context) {
 		utils.HandleError(c, err, "failed to retrieve params", http.StatusBadRequest)
 		return
 	}
+	ok, err = models.IsCreated(taskId, user.(*types.User).Id)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get data from db", http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		utils.HandleError(c, nil, "no task found", http.StatusBadRequest)
+		return
+	}
 
 	var ChangeStatus types.ChangeStatus
 	ChangeStatus.TaskId = taskId
@@ -48,6 +58,16 @@ func ChangeStatus(c *gin.Context) {
 	err = PushStatusToQueue(Topic, statusInBytes)
 	if err != nil {
 		utils.HandleError(c, err, "failed to send message to broker ", http.StatusInternalServerError)
+		return
+	}
+	var NewLog = types.Log{
+		UserId: user.(*types.User).Id,
+		TaskId: taskId,
+		Action: "Updated tasks status",
+	}
+	err = models.CreateLog(NewLog)
+	if err != nil {
+		log.Println()
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{

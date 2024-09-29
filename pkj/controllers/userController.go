@@ -101,7 +101,15 @@ func DeleteUser(c *gin.Context) {
 		utils.HandleError(c, err, "failed to converte to int ", http.StatusBadRequest)
 		return
 	}
-
+	ok, err := models.IsSignedUpById(userId)
+	if err != nil {
+		utils.HandleError(c, err, "failed to get data from db ", http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		utils.HandleError(c, nil, "no user found", http.StatusBadRequest)
+		return
+	}
 	err = models.DeleteUser(userId)
 	if err != nil {
 		utils.HandleError(c, err, "failed to delete user from db ", http.StatusInternalServerError)
