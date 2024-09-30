@@ -2,8 +2,6 @@ module github.com/Megidy/TaskManagmentSystem
 
 go 1.23
 
-toolchain go1.23.1
-
 require (
 	github.com/IBM/sarama v1.43.3
 	github.com/gin-gonic/gin v1.10.0

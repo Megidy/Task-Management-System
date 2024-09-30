@@ -24,5 +24,12 @@ CREATE TABLE IF NOT EXISTS tasks (
 CREATE TABLE IF NOT EXISTS task_dependencies (
     user_id INT,
     task_id INT,                                   
-    dependent_task_id INT                       
+    dependent_task_id INT
 );
+
+CREATE TABLE IF NOT EXISTS logs (
+    user_id INT,
+    task_id INT,  
+    date TIMESTAMP,
+    action VARCHAR(255)
+)
